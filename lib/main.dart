@@ -133,15 +133,20 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     _buildButton('5', onPressed: () => _appendNumber('5')),
                     _buildButton('6', onPressed: () => _appendNumber('6')),
                     _buildButton(
-                      '+',
-                      onPressed: () => _appendOperator('+'),
+                      'x²',
+                      onPressed: _squareNumber,
                       isOperator: true,
                     ),
                     _buildButton('1', onPressed: () => _appendNumber('1')),
                     _buildButton('2', onPressed: () => _appendNumber('2')),
                     _buildButton('3', onPressed: () => _appendNumber('3')),
-                    _buildButton('.', onPressed: () => _appendDecimal()),
+                    _buildButton(
+                      '+',
+                      onPressed: () => _appendOperator('+'),
+                      isOperator: true,
+                    ),
                     _buildButton('0', onPressed: () => _appendNumber('0')),
+                    _buildButton('.', onPressed: () => _appendDecimal()),
                     _buildButton('00', onPressed: () => _appendNumber('00')),
                     _buildButton(
                       '=',
@@ -270,6 +275,41 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       lastNumber = expression[i] + lastNumber;
     }
     return lastNumber;
+  }
+
+  void _squareNumber() {
+    setState(() {
+      if (expression.isEmpty) {
+        return;
+      }
+
+      try {
+        // Get the last number in the expression
+        String lastNumber = _getLastNumber();
+        if (lastNumber.isEmpty) {
+          return;
+        }
+
+        // Parse the last number and square it
+        double number = double.parse(lastNumber);
+        double squared = number * number;
+
+        // Replace the last number with the squared result
+        expression = expression.substring(0, expression.length - lastNumber.length);
+        
+        // Format squared result
+        if (squared == squared.toInt()) {
+          expression += squared.toInt().toString();
+        } else {
+          expression += squared.toString();
+        }
+        
+        _updateDisplay();
+      } catch (e) {
+        // If parsing fails, do nothing
+        return;
+      }
+    });
   }
 
   void _backspace() {
